@@ -1,8 +1,7 @@
 ﻿using System.Reflection;
-using Dumpify.Extensions;
 using System.Runtime.CompilerServices;
 
-namespace Dumpify;
+namespace Dumpify.Renderers;
 
 internal class TypeNameProvider : ITypeNameProvider
 {

@@ -1,4 +1,4 @@
-﻿namespace Dumpify;
+﻿namespace Dumpify.Renderers;
 
 public interface ITypeNameProvider
 {

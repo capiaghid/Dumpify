@@ -1,11 +1,12 @@
-﻿using Dumpify.Extensions;
-using Dumpify.Descriptors.Generators;
-using System.Reflection;
-using System.Collections.Concurrent;
-using Dumpify;
-using Dumpify.Descriptors.ValueProviders;
+﻿using System.Collections.Concurrent;
 
-namespace Dumpify;
+using Dumpify.Descriptors.Generators;
+using Dumpify.Descriptors.ValueProviders;
+using Dumpify.Extensions;
+using Dumpify.Outputs;
+using Dumpify.Renderers;
+
+namespace Dumpify.Config;
 
 public class DumpConfig
 {
@@ -19,8 +20,8 @@ public class DumpConfig
     {
         CustomDescriptorHandlers = new ConcurrentDictionary<RuntimeTypeHandle, Func<object, Type, IValueProvider?, IMemberProvider, object?>>();
         Generator = new CompositeDescriptorGenerator(CustomDescriptorHandlers);
-        Renderer = Dumpify.Renderers.Table;
-        Output = Dumpify.Outputs.Console;
+        Renderer = Renderers.Table;
+        Output = Outputs.Console;
         ColorConfig = new ColorConfig();
         TableConfig = new TableConfig();
         MembersConfig = new MembersConfig();

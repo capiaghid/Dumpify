@@ -6,6 +6,10 @@ using System.Data;
 using System.Reflection;
 using System.Text;
 
+using Dumpify.Config;
+using Dumpify.Extensions;
+using Dumpify.Playground;
+
 //DumpConfig.Default.Renderer = Renderers.Text;
 //DumpConfig.Default.ColorConfig = ColorConfig.NoColors;
 
@@ -311,81 +315,3 @@ void ShowEverything()
     //JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
 }
 #pragma warning restore CS8321
-
-public enum Profession { Software, Health };
-public record class Person
-{
-    public required string FirstName { get; set; }
-    public required string LastName { get; set; }
-
-    public Person? Spouse { get; set; }
-
-    public Profession Profession { get; set; }
-}
-
-public class Family
-{
-    public Person? Parent1 { get; set; }
-    public Person? Parent2 { get; set; }
-
-    public int FamilyId { get; set; }
-
-    public Person[]? ChildrenArray { get; set; }
-    public List<Person>? ChildrenList { get; set; }
-    public ArrayList? ChildrenArrayList { get; set; }
-
-    public Type? FamilyType { get; set; }
-
-    public StringBuilder? FamilyNameBuilder { get; set; }
-}
-
-public record class Book(string[] Authors);
-
-public class AdditionValue
-{
-    private readonly int _a;
-    private readonly int _b;
-
-    public AdditionValue(int a, int b)
-    {
-        _a = a;
-        _b = b;
-    }
-
-    private int Value => _a + _b;
-}
-
-public class Device
-{
-    public bool isPowered { get; set; }
-}
-
-
-class Test : ICollection<KeyValuePair<string, int>>
-{
-    private List<(string key, int value)> _list = new();
-
-    public IEnumerator<KeyValuePair<string, int>> GetEnumerator()
-        => _list.Select(l => new KeyValuePair<string, int>(l.key, l.value)).GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator()
-        => GetEnumerator();
-
-    public void Add(KeyValuePair<string, int> item)
-        => _list.Add((item.Key, item.Value));
-
-    public void Clear()
-        => _list.Clear();
-
-    public bool Contains(KeyValuePair<string, int> item)
-        => _list.Contains((item.Key, item.Value));
-
-    public void CopyTo(KeyValuePair<string, int>[] array, int arrayIndex)
-        => throw new NotImplementedException();
-
-    public bool Remove(KeyValuePair<string, int> item)
-        => throw new NotImplementedException();
-
-    public int Count => _list.Count;
-    public bool IsReadOnly { get; } = false;
-}

@@ -1,6 +1,6 @@
 ﻿using Dumpify.Descriptors;
 
-namespace Dumpify;
+namespace Dumpify.Renderers;
 
 internal class CustomTypeRenderer<TRenderable> : ICustomTypeRenderer<TRenderable>
 {

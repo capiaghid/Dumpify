@@ -1,10 +1,12 @@
-﻿using Dumpify.Descriptors;
+﻿using System.Collections.Concurrent;
+
+using Dumpify.Descriptors;
 using Dumpify.Descriptors.ValueProviders;
+
 using Spectre.Console;
 using Spectre.Console.Rendering;
-using System.Collections.Concurrent;
 
-namespace Dumpify;
+namespace Dumpify.Renderers.Spectre.Console;
 
 internal abstract class SpectreConsoleRendererBase : RendererBase<IRenderable, SpectreRendererState>
 {

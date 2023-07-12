@@ -1,9 +1,13 @@
-﻿using Dumpify.Descriptors;
+﻿using System.Data;
+
+using Dumpify.Config;
+using Dumpify.Descriptors;
+using Dumpify.Renderers.Spectre.Console.Builder;
+
 using Spectre.Console;
 using Spectre.Console.Rendering;
-using System.Data;
 
-namespace Dumpify;
+namespace Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
 
 
 internal class DataSetTypeRenderer : ICustomTypeRenderer<IRenderable>

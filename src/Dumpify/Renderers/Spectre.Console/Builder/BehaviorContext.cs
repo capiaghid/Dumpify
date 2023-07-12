@@ -1,4 +1,4 @@
-namespace Dumpify;
+namespace Dumpify.Renderers.Spectre.Console.Builder;
 
 public class BehaviorContext
 {

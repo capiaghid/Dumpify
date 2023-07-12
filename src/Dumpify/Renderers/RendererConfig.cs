@@ -1,7 +1,7 @@
-﻿using Dumpify;
+﻿using Dumpify.Config;
 using Dumpify.Descriptors.ValueProviders;
 
-namespace Dumpify;
+namespace Dumpify.Renderers;
 
 public record RendererConfig
 {

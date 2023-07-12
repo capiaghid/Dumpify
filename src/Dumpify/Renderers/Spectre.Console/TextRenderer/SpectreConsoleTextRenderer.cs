@@ -1,12 +1,15 @@
-﻿using Dumpify.Descriptors;
-using Dumpify.Extensions;
-using Spectre.Console;
-using Spectre.Console.Rendering;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Concurrent;
 using System.Text;
 
-namespace Dumpify;
+using Dumpify.Config;
+using Dumpify.Descriptors;
+using Dumpify.Extensions;
+
+using Spectre.Console;
+using Spectre.Console.Rendering;
+
+namespace Dumpify.Renderers.Spectre.Console.TextRenderer;
 
 internal class SpectreConsoleTextRenderer : SpectreConsoleRendererBase
 {

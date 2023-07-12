@@ -1,9 +1,11 @@
-﻿using Dumpify.Descriptors;
-using Dumpify.Descriptors.ValueProviders;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 
-namespace Dumpify;
+using Dumpify.Config;
+using Dumpify.Descriptors;
+using Dumpify.Descriptors.ValueProviders;
+
+namespace Dumpify.Renderers;
 
 internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRendererHandler<TRenderable, TState>
 {

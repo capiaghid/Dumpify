@@ -1,12 +1,6 @@
-﻿using Dumpify;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Dumpify.Renderers;
 
-namespace Dumpify;
+namespace Dumpify.Outputs;
 
 public class DumpOutput : IDumpOutput
 {

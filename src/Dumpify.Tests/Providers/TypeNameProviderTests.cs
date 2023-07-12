@@ -1,5 +1,7 @@
 ﻿using System.Text;
 
+using Dumpify.Renderers;
+
 namespace Dumpify.Tests.Providers
 {
     [TestClass]
@@ -190,4 +192,3 @@ namespace Dumpify.Tests.Providers
 
 
 //This type should be outside of namespace so that it shall be null
-public record TestType(string Prop1, string Prop2);

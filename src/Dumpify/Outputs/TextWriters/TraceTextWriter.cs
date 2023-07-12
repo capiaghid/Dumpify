@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
 
-namespace Dumpify;
+namespace Dumpify.Outputs.TextWriters;
 
 internal class TraceTextWriter : TextWriter
 {

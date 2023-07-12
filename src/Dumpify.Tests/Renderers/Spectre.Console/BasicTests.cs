@@ -2,6 +2,9 @@
 using Dumpify.Tests.DTO;
 using System.Collections.Concurrent;
 
+using Dumpify.Renderers;
+using Dumpify.Renderers.Spectre.Console.TableRenderer;
+
 namespace Dumpify.Tests.Renderers.Spectre.Console;
 
 [TestClass]

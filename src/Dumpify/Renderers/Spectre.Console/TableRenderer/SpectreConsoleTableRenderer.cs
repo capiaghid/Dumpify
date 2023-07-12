@@ -1,11 +1,15 @@
-﻿using Dumpify.Descriptors;
+﻿using System.Collections;
+using System.Collections.Concurrent;
+
+using Dumpify.Config;
+using Dumpify.Descriptors;
+using Dumpify.Renderers.Spectre.Console.Builder;
+using Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
+
 using Spectre.Console;
 using Spectre.Console.Rendering;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Runtime.CompilerServices;
 
-namespace Dumpify;
+namespace Dumpify.Renderers.Spectre.Console.TableRenderer;
 
 internal class SpectreConsoleTableRenderer : SpectreConsoleRendererBase
 {

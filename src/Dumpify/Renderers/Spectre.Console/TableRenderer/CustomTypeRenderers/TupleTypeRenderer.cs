@@ -1,11 +1,12 @@
-﻿using Dumpify;
-using Dumpify.Descriptors;
-using Dumpify.Extensions;
-using Spectre.Console;
-using Spectre.Console.Rendering;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
-namespace Dumpify;
+using Dumpify.Config;
+using Dumpify.Descriptors;
+using Dumpify.Renderers.Spectre.Console.Builder;
+
+using Spectre.Console.Rendering;
+
+namespace Dumpify.Renderers.Spectre.Console.TableRenderer.CustomTypeRenderers;
 
 internal class TupleTypeRenderer : ICustomTypeRenderer<IRenderable>
 {

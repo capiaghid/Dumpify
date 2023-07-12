@@ -1,4 +1,7 @@
-﻿namespace Dumpify;
+﻿using Dumpify.Outputs;
+using Dumpify.Outputs.TextWriters;
+
+namespace Dumpify.Config;
 
 public static class Outputs
 {

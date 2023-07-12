@@ -1,4 +1,4 @@
-﻿namespace System.Diagnostics.CodeAnalysis;
+﻿namespace Dumpify.Polyfills;
 
 /// <summary>
 /// Specifies that this constructor sets all required members for the current type, and callers

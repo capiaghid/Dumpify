@@ -1,7 +1,9 @@
-﻿using Spectre.Console;
+﻿using Dumpify.Outputs;
+
+using Spectre.Console;
 using Spectre.Console.Rendering;
 
-namespace Dumpify;
+namespace Dumpify.Renderers.Spectre.Console;
 
 internal class SpectreConsoleRenderedObject : IRenderedObject
 {

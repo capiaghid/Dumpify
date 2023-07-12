@@ -1,24 +1,27 @@
-﻿using Dumpify;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Dumpify.Config;
 using Dumpify.Descriptors;
 using Dumpify.Descriptors.ValueProviders;
-using Dumpify.Extensions;
-using System.Diagnostics.CodeAnalysis;
+using Dumpify.Outputs;
+using Dumpify.Renderers;
+// ReSharper disable UnusedParameter.Local
 
-namespace Dumpify;
+namespace Dumpify.Extensions;
 
 public static class DumpExtensions
 {
     [return: NotNullIfNotNull(nameof(obj))]
     public static T? DumpDebug<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
-        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Dumpify.Outputs.Debug, members: members, tableConfig: tableConfig);
+        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Config.Outputs.Debug, members: members, tableConfig: tableConfig);
 
     [return: NotNullIfNotNull(nameof(obj))]
     public static T? DumpTrace<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
-        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Dumpify.Outputs.Trace, members: members, tableConfig: tableConfig);
+        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Config.Outputs.Trace, members: members, tableConfig: tableConfig);
 
     [return: NotNullIfNotNull(nameof(obj))]
     public static T? DumpConsole<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
-        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Dumpify.Outputs.Console, members: members, tableConfig: tableConfig);
+        => obj.Dump(label: label, maxDepth: maxDepth, renderer: renderer, useDescriptors: useDescriptors, typeNames: typeNames, colors: colors, output: Config.Outputs.Console, members: members, tableConfig: tableConfig);
 
     public static string DumpText<T>(this T? obj, string? label = null, int? maxDepth = null, IRenderer? renderer = null, bool? useDescriptors = null, ColorConfig? colors = null, MembersConfig? members = null, TypeNamingConfig? typeNames = null, TableConfig? tableConfig = null)
     {

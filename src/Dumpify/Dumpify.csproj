@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0;netstandard2.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net7.0;netstandard2.1;netstandard2.0; net48</TargetFrameworks>
     <PackageReadmeFile>nuget.md</PackageReadmeFile>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

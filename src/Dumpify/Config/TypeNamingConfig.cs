@@ -1,4 +1,4 @@
-﻿namespace Dumpify;
+﻿namespace Dumpify.Config;
 
 public class TypeNamingConfig
 {

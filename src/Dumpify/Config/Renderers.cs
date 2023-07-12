@@ -1,4 +1,7 @@
-﻿namespace Dumpify;
+﻿using Dumpify.Renderers;
+using Dumpify.Renderers.Spectre.Console.TableRenderer;
+
+namespace Dumpify.Config;
 
 public static class Renderers
 {

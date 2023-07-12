@@ -1,7 +1,8 @@
-﻿using Dumpify.Extensions;
-using System.Drawing;
+﻿using System.Drawing;
 
-namespace Dumpify;
+using Dumpify.Extensions;
+
+namespace Dumpify.Config;
 
 public class DumpColor
 {

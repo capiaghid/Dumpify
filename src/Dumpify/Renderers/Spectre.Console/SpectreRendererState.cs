@@ -1,8 +1,8 @@
+using Dumpify.Config;
 
-using Dumpify;
 using Spectre.Console;
 
-namespace Dumpify;
+namespace Dumpify.Renderers.Spectre.Console;
 
 public class SpectreRendererState
 {
