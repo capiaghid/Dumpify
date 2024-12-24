@@ -3,6 +3,7 @@ using Dumpify.Descriptors.ValueProviders;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace Dumpify;
 
@@ -23,7 +24,31 @@ internal abstract class SpectreConsoleRendererBase : RendererBase<IRenderable, S
         => new Markup(Markup.Escape(value.ToString() ?? ""), new Style(foreground: color));
 
     protected override IRenderable RenderSingleValueDescriptor(object obj, SingleValueDescriptor descriptor, RenderContext<SpectreRendererState> context)
-        => RenderSingleValue(obj is string str ? $"\"{str}\"" : obj, context, context.State.Colors.PropertyValueColor);
+    {
+        var stringQuotationChar = context.Config.TypeRenderingConfig.StringQuotationChar;
+        var charQuotationChar = context.Config.TypeRenderingConfig.CharQuotationChar;
+        var renderValue = obj switch
+        {
+            string str when context.Config.TypeRenderingConfig.QuoteStringValues => $"{stringQuotationChar}{str}{stringQuotationChar}",
+            char ch when context.Config.TypeRenderingConfig.QuoteCharValues => $"{charQuotationChar}{ch}{charQuotationChar}",
+            _ => obj,
+        };
+
+        var singleValue = RenderSingleValue(renderValue, context, context.State.Colors.PropertyValueColor);
+
+        if (context.Config.Label is { } label && context.CurrentDepth == 0 && (object.ReferenceEquals(context.RootObject, obj) || (context.RootObjectTransform is not null && object.ReferenceEquals(context.RootObjectTransform, obj))))
+        {
+            var builder = new ObjectTableBuilder(context, descriptor, obj);
+            return builder
+                .AddColumnName("Value")
+                .AddRow(descriptor, obj, singleValue)
+                .HideTitle()
+                .HideHeaders()
+                .Build();
+        }
+
+        return singleValue;
+    }
 
     public override IRenderable RenderNullValue(IDescriptor? descriptor, RenderContext<SpectreRendererState> context)
         => RenderSingleValue("null", context, context.State.Colors.NullValueColor);
@@ -32,7 +57,7 @@ internal abstract class SpectreConsoleRendererBase : RendererBase<IRenderable, S
         => RenderSingleValue($"[Exceeded max depth {context.Config.MaxDepth}]", context, context.State.Colors.MetadataInfoColor);
 
     protected override IRenderable RenderCircularDependency(object @object, IDescriptor? descriptor, RenderContext<SpectreRendererState> context)
-            => RenderSingleValue($"[Circular Reference]", context, context.State.Colors.MetadataInfoColor);
+            => RenderSingleValue($"[Circular Reference #{context.Config.TypeNameProvider.GetTypeName(@object.GetType())}]", context, context.State.Colors.MetadataInfoColor);
 
     protected override IRenderable RenderNullDescriptor(object obj, RenderContext<SpectreRendererState> context)
             => RenderSingleValue($"[null descriptor] {obj}", context, context.State.Colors.MetadataErrorColor);

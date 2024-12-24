@@ -27,7 +27,7 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
     {
         var state = CreateState(obj, descriptor, config);
         var idGenerator = new ObjectIDGenerator();
-        var context = new RenderContext<TState>(config, idGenerator, 0, obj, state);
+        var context = new RenderContext<TState>(config, idGenerator, 0, obj, null, state);
 
         var renderable = obj switch
         {
@@ -60,6 +60,7 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
             SingleValueDescriptor singleDescriptor => TryRenderCustomTypeDescriptor(@object, singleDescriptor, context, RenderSingleValueDescriptor),
             ObjectDescriptor objDescriptor => TryRenderCustomTypeDescriptor(@object, objDescriptor, context, TryRenderObjectDescriptor),
             MultiValueDescriptor multiDescriptor => TryRenderCustomTypeDescriptor(@object, multiDescriptor, context, RenderMultiValueDescriptor),
+            LabelDescriptor labelDescriptor => TryRenderCustomTypeDescriptor(@object, labelDescriptor, context, RenderLabelDescriptor),
             CustomDescriptor customDescriptor => TryRenderCustomTypeDescriptor(@object, customDescriptor, context, RenderCustomDescriptor),
             _ => RenderUnsupportedDescriptor(@object, descriptor, context),
         };
@@ -127,6 +128,8 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
             return RenderNullValue(customDescriptor, context);
         }
 
+        context = context with { RootObjectTransform = customValue };
+
         var customValueDescriptor = DumpConfig.Default.Generator.Generate(customValue.GetType(), null, memberProvider);
 
         return RenderDescriptor(customValue, customValueDescriptor, context);
@@ -139,16 +142,16 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
         return firstTime is false;
     }
 
-    protected virtual TRenderable GetValueAndRender(object source, IValueProvider valueProvider, IDescriptor? descriptor, RenderContext<TState> context)
+    protected virtual (bool success, object? value, TRenderable renderedValue) GetValueAndRender(object source, IValueProvider valueProvider, IDescriptor? descriptor, RenderContext<TState> context, object? providedValue = null)
     {
         try
         {
-            var value = valueProvider.GetValue(source);
-            return RenderDescriptor(value, descriptor, context);
+            var value = providedValue ?? valueProvider.GetValue(source);
+            return (true, value, RenderDescriptor(value, descriptor, context));
         }
         catch (Exception ex)
         {
-            return RenderFailedValueReading(ex, valueProvider, descriptor, context);
+            return (false, default, RenderFailedValueReading(ex, valueProvider, descriptor, context));
         }
     }
 
@@ -168,6 +171,6 @@ internal abstract class RendererBase<TRenderable, TState> : IRenderer, IRenderer
     protected abstract TRenderable RenderUnsupportedDescriptor(object obj, IDescriptor descriptor, RenderContext<TState> context);
     protected abstract TRenderable RenderObjectDescriptor(object obj, ObjectDescriptor descriptor, RenderContext<TState> context);
     protected abstract TRenderable RenderMultiValueDescriptor(object obj, MultiValueDescriptor descriptor, RenderContext<TState> context);
-
+    protected abstract TRenderable RenderLabelDescriptor(object obj, LabelDescriptor descriptor, RenderContext<TState> context);
     protected abstract TState CreateState(object? obj, IDescriptor? descriptor, RendererConfig config);
 }

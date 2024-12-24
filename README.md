@@ -1,5 +1,12 @@
 # Dumpify
+<img src="https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/Dumpify-logo-styled.png" alt="drawing" width="200" />
+
 [![Github version](https://badge.fury.io/nu/Dumpify.svg)](https://badge.fury.io/nu/Dumpify)
+![example workflow](https://github.com/MoaidHathot/Dumpify/actions/workflows/build-dumpify.yml/badge.svg)
+![Publish Nuget](https://github.com/MoaidHathot/Dumpify/actions/workflows/publish-dumpify.yml/badge.svg)
+![Nuget Downloads](https://img.shields.io/nuget/dt/Dumpify)
+![GitHub Repo stars](https://img.shields.io/github/stars/MoaidHathot/Dumpify)
+![GitHub License](https://img.shields.io/github/license/MoaidHathot/Dumpify)
 
 Improve productivity and debuggability by adding `.Dump()` extension methods to **Console Applications**.
 `Dump` any object in a structured and colorful way into the Console, Trace, Debug events or your own custom output.
@@ -9,6 +16,16 @@ The library is published as a [Nuget](https://www.nuget.org/packages/Dumpify)
 
 Either run `dotnet add package Dumpify`, `Install-Package Dumpify` or use Visual Studio's [NuGet Package Manager](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-visual-studio)
 
+# Overview Video
+ An overview video hosted on the `Open at Microsoft` show<br><br>
+<a href="https://www.youtube.com/watch?v=ERWAMSgz-vc">
+	<img src = "https://github.com/MoaidHathot/Dumpify/assets/8770486/2fcdc3eb-1c09-465a-99ba-19c267565bea" width = "400" />
+<br>	
+</a>
+
+![https://www.youtube.com/watch?v=ERWAMSgz-vc](https://www.youtube.com/watch?v=ERWAMSgz-vc)
+
+
 
 # Features
 * Dump any object in a structured, colorful way to Console, Debug, Trace or any other custom output
@@ -17,7 +34,7 @@ Either run `dotnet add package Dumpify`, `Install-Package Dumpify` or use Visual
 * Support circular dependencies and references
 * Support styling and customizations
 * Highly Configurable
-* Support for differnt otuput targets: Console, Trace, Debug, Text, Custom
+* Support for different output targets: Console, Trace, Debug, Text, Custom
 * Fast!
     
 # Examples:
@@ -41,7 +58,7 @@ moaid.Dump();
 ```
 ![image](https://user-images.githubusercontent.com/8770486/232280616-c6127820-7e2b-448b-81ca-1aded2894cdc.png)
 
-### Support for Arrrays, Dictionaries and Collections
+### Support for Arrays, Dictionaries and Collections
 ```csharp
 var arr = new[] { 1, 2, 3, 4 }.Dump();
 ```
@@ -63,6 +80,14 @@ new Dictionary<string, string>
 ```
 ![image](https://user-images.githubusercontent.com/8770486/232251913-add4a0d8-3355-44f6-ba94-5dfbf8d8e2ac.png)
 
+You can ensure that arrays, dictionaries and collections don't output too much by allowing results to be truncated. Do this by setting the `MaxCollectionCount` property in the tableConfig.
+
+```csharp
+int[] arr = [1, 2, 3, 4];
+
+// Outputs only the first two elements and a message that says: ... truncated 2 items
+arr.Dump(tableConfig: new () { MaxCollectionCount = 2 });
+```
 
 ### You can turn on or off fields and private members
 ```csharp
@@ -85,7 +110,45 @@ new AdditionValue(1, 2).Dump(members: new MembersConfig { IncludeFields = true, 
 ```
 ![image](https://user-images.githubusercontent.com/8770486/232252840-c5b0ea4c-eae9-4dc2-bd6c-d42ee58505eb.png)
 
+### You can provide a custom filter to determine if members should be included or not
+```csharp
+public class Person
+{
+    public string Name { get; set; }
 
+    [JsonIgnore]
+    public string SensitiveData { get; set; }
+}
+
+new Person()
+{
+    Name = "Moaid",
+    SensitiveData = "We don't want this to show up"
+}.Dump(members: new MembersConfig { MemberFilter = member => !member.Info.CustomAttributes.Any(a => a.AttributeType == typeof(JsonIgnoreAttribute)) });
+```
+
+### You can turn on or off row separators and a type column
+```csharp
+//globally
+DumpConfig.Default.TableConfig.ShowMemberTypes = true;
+DumpConfig.Default.TableConfig.ShowRowSeparators = true;
+
+new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
+
+//or Per dump
+new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump(tableConfig: new TableConfig { ShowRowSeparators = true, ShowMemberTypes = true });
+```
+![image](https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/screenshots/row-separator.png)
+
+### You can set custom labels or auto-labels
+```csharp
+new { Description = "You can manually specify labels to objects" }.Dump("Manual label");
+
+//Set auto-label globally for all dumps if a custom label wasn't provider
+DumpConfig.Default.UseAutoLabels = true;
+new { Description = "Or set labels automatically with auto-labels" }.Dump();
+```
+![image](https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/screenshots/custom-label-and-auto-labels.png)
 
 ### You can customize colors
 ```csharp
@@ -120,7 +183,7 @@ package.Dump(output: new DumpOutput(writer)); //Custom output
 ```
 
 
-### Every configuration can be defiend per-Dump or globally for all Dumps, e.g:
+### Every configuration can be defined per-Dump or globally for all Dumps, e.g:
 ```csharp
 DumpConfig.Default.TypeNamingConfig.UseAliases = true;
 DumpConfig.Default.TypeNamingConfig.ShowTypeNames = false;
@@ -131,29 +194,23 @@ DumpConfig.Default.MaxDepth = 3;
 
 
 
-# Features for the future 0.6.0 release
+# Features for the future 0.7.0 release
 * Add configuration for formatting Anonymous Objects type names
-* Cache Spectre.Console styles and colors
 * Text renderer
-* Consider disabling wrapping of Table titles
-* re-introduce labels
-* Better styling of Custom values
-	* Typeof(T) for example, Generic types, etc.
 * Better rendering of Delegates
-* Unifying namespaces of library types
-* Handling all Reflection types
+* Write the `Count` values of dictionaries and IEnumerables in the name, e.g `Dictionary<string, string>(3)`
+* Add an option to limit how many elements to render for collections and arrays.
+* **consider** changing the default color scheme to VSCode's
 * Documentation
-* Support .NET Standard 2.0 instad of .NET Standard 2.1
-* Better support for `Nullable<T>`
-* Better support for Reflection types.
-
+* Consider changing the style/view of ObjectDescriptors without properties (currently empty table)
+* Fix simplified type names with Collection expressions (IEnumearble<int> col = [1, 2, 3]);
 
 # To do
 * Live outputs
 * Add custom rendering for more types:
-    - DataTable & DataSets
     - Exceptions, AggregateExceptions, etc...
 * Rethink Generators caching keys
+* Ditch `ObjectIdGenerator` and create a custom, modern implementation
 * Consider using Max Depth for Descriptors
 * Refactor Renderers and make it better extendable
 * Add more renderers
@@ -170,4 +227,3 @@ DumpConfig.Default.MaxDepth = 3;
 	* The current CustomDescriptorGenerator must generate a value
 	* Consider ValueTuple
 * Refactor SpectureTableRenderer to share customization code
-* Consider changing the style/view of ObjectDescriptors without properties (currently empty table)

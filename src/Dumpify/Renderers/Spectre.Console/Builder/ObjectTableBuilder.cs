@@ -10,7 +10,7 @@ internal class ObjectTableBuilder
     private readonly IDescriptor _descriptor;
     private readonly object _sourceObject;
 
-    private List<ITableBuilderBehavior> _behaviors = new();
+    private readonly List<ITableBuilderBehavior> _behaviors = new();
 
     private readonly List<IEnumerable<IRenderable>> _rows = new();
     private readonly List<IRenderable> _columnNames = new(2);
@@ -64,7 +64,7 @@ internal class ObjectTableBuilder
     public ObjectTableBuilder SetColumnNames(params string[] columnNames)
         => SetColumnNames((IEnumerable<string>)columnNames);
 
-    public ObjectTableBuilder SetTitle(string? title, Style? style = null)
+    public ObjectTableBuilder SetTitle(string? title, Style? style)
     {
         _title = title switch
         {
@@ -83,6 +83,12 @@ internal class ObjectTableBuilder
 
     public ObjectTableBuilder AddRow(IDescriptor? descriptor, object? obj, IEnumerable<IRenderable> renderables)
     {
+        foreach (var behavior in _behaviors)
+        {
+            var additional = behavior.GetAdditionalCells(obj, descriptor, _context);
+            renderables = additional.Concat(renderables);
+        }
+
         _rows.Add(renderables);
 
         return this;
@@ -96,7 +102,7 @@ internal class ObjectTableBuilder
         => AddRow(descriptor, obj, new[] { ToPropertyNameMarkup(keyValue), renderedValue });
 
     //todo: In the future, after the refactoring, this should be an extension method
-    public ObjectTableBuilder AddRowWithTypeName(IDescriptor? descriptor, object? obj, IRenderable renderedValue)
+    public ObjectTableBuilder AddRowWithObjectName(IDescriptor? descriptor, object? obj, IRenderable renderedValue)
         => AddRow(descriptor, obj, new[] { ToPropertyNameMarkup(descriptor?.Name ?? ""), renderedValue });
 
     public ObjectTableBuilder HideHeaders()
@@ -166,9 +172,9 @@ internal class ObjectTableBuilder
             table.HideHeaders();
         }
 
-        if (_context.Config.Label is { } label && _context.CurrentDepth == 0 && object.ReferenceEquals(_context.RootObject, _sourceObject))
+        if (_context.Config.Label is { } label && _context.CurrentDepth == 0 && (object.ReferenceEquals(_context.RootObject, _sourceObject) || _context.RootObjectTransform is not null && object.ReferenceEquals(_context.RootObjectTransform, _sourceObject)))
         {
-            table.Caption = new TableTitle(Markup.Escape(label));
+            table.Caption = new TableTitle(Markup.Escape(label), new Style(foreground: _context.State.Colors.LabelValueColor));
         }
 
         var columns = GetBehaviorColumns().Concat(_columnNames);
@@ -179,7 +185,7 @@ internal class ObjectTableBuilder
 
             if (_context.Config.TableConfig.NoColumnWrapping)
                 tableColumn.NoWrap();
-            
+
             table.AddColumn(tableColumn);
         }
 
@@ -192,6 +198,11 @@ internal class ObjectTableBuilder
         }
 
         table.RoundedBorder();
+
+        if (_context.Config.TableConfig.ShowRowSeparators)
+        {
+            table.ShowRowSeparators();
+        }
 
         return _context.Config.TableConfig.ExpandTables ? table.Expand() : table.Collapse();
     }

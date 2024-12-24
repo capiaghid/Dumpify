@@ -9,9 +9,9 @@ Improve productivity and debuggability by adding `.Dump()` extension methods to 
 * Support circular dependencies and references
 * Support styling and customizations
 * Highly Configurable
-* Support for differnt otuput targets: Console, Trace, Debug, Text, Custom
+* Support for different output targets: Console, Trace, Debug, Text, Custom
 * Fast!
-
+    
 # Examples:
 ## Anonymous types
 ```csharp
@@ -33,7 +33,7 @@ moaid.Dump();
 ```
 ![image](https://user-images.githubusercontent.com/8770486/232280616-c6127820-7e2b-448b-81ca-1aded2894cdc.png)
 
-### Support for Arrrays, Dictionaries and Collections
+### Support for Arrays, Dictionaries and Collections
 ```csharp
 var arr = new[] { 1, 2, 3, 4 }.Dump();
 ```
@@ -47,10 +47,10 @@ var arr2d = new int[,] { {1, 2}, {3, 4} }.Dump();
 ```csharp
 new Dictionary<string, string>
 {
-    ["Moaid"] = "Hathot",
-    ["Haneeni"] = "Shibli",
-    ["Eren"] = "Yeager",
-    ["Mikasa"] = "Ackerman",
+   ["Moaid"] = "Hathot",
+   ["Haneeni"] = "Shibli",
+   ["Eren"] = "Yeager",
+   ["Mikasa"] = "Ackerman",
 }.Dump();
 ```
 ![image](https://user-images.githubusercontent.com/8770486/232251913-add4a0d8-3355-44f6-ba94-5dfbf8d8e2ac.png)
@@ -77,7 +77,45 @@ new AdditionValue(1, 2).Dump(members: new MembersConfig { IncludeFields = true, 
 ```
 ![image](https://user-images.githubusercontent.com/8770486/232252840-c5b0ea4c-eae9-4dc2-bd6c-d42ee58505eb.png)
 
+### You can provide a custom filter to determine if members should be included or not
+```csharp
+public class Person
+{
+    public string Name { get; set; }
 
+    [JsonIgnore]
+    public string SensitiveData { get; set; }
+}
+
+new Person()
+{
+    Name = "Moaid",
+    SensitiveData = "We don't want this to show up"
+}.Dump(members: new MembersConfig { MemberFilter = member => !member.Info.CustomAttributes.Any(a => a.AttributeType == typeof(JsonIgnoreAttribute)) });
+```
+
+### You can turn on or off row separators and a type column
+```csharp
+//globally
+DumpConfig.Default.TableConfig.ShowMemberTypes = true;
+DumpConfig.Default.TableConfig.ShowRowSeparators = true;
+
+new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump();
+
+//or Per dump
+new { Name = "Dumpify", Description = "Dump any object to Console" }.Dump(tableConfig: new TableConfig { ShowRowSeparators = true, ShowMemberTypes = true });
+```
+![image](https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/screenshots/row-separator.png)
+
+### You can set custom labels or auto-labels
+```csharp
+new { Description = "You can manually specify labels to objects" }.Dump("Manual label");
+
+//Set auto-label globally for all dumps if a custom label wasn't provider
+DumpConfig.Default.UseAutoLabels = true;
+new { Description = "Or set labels automatically with auto-labels" }.Dump();
+```
+![image](https://raw.githubusercontent.com/MoaidHathot/Dumpify/main/assets/screenshots/custom-label-and-auto-labels.png)
 
 ### You can customize colors
 ```csharp
@@ -111,8 +149,7 @@ using var writer = new StringWriter();
 package.Dump(output: new DumpOutput(writer)); //Custom output
 ```
 
-
-### Every configuration can be defiend per-Dump or globally for all Dumps, e.g:
+### Every configuration can be defined per-Dump or globally for all Dumps, e.g:
 ```csharp
 DumpConfig.Default.TypeNamingConfig.UseAliases = true;
 DumpConfig.Default.TypeNamingConfig.ShowTypeNames = false;

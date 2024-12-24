@@ -1,5 +1,4 @@
-﻿using Dumpify;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Dumpify.Descriptors.ValueProviders;
 
@@ -9,18 +8,26 @@ internal sealed record MemberProvider : IMemberProvider
     private readonly bool _includeFields;
     private readonly bool _includePublicMembers;
     private readonly bool _includeNonPublicMembers;
+    private readonly bool _includeVirtualMembers;
+    private readonly Func<IValueProvider, bool>? _memberFilter;
 
     public MemberProvider()
-        : this(true, false, true, false)
-    {
-        
-    }
-    public MemberProvider(bool includeProperties, bool includeFields, bool includePublicMembers, bool includeNonPublicMembers)
+        : this(includeProperties: true, includeFields: false, includePublicMembers: true, includeNonPublicMembers: false, includeVirtualMembers: true, memberFilter: null) { }
+
+    public MemberProvider(
+        bool includeProperties,
+        bool includeFields,
+        bool includePublicMembers,
+        bool includeNonPublicMembers,
+        bool includeVirtualMembers,
+        Func<IValueProvider, bool>? memberFilter)
     {
         _includeProperties = includeProperties;
         _includeFields = includeFields;
         _includePublicMembers = includePublicMembers;
         _includeNonPublicMembers = includeNonPublicMembers;
+        _includeVirtualMembers = includeVirtualMembers;
+        _memberFilter = memberFilter;
     }
 
     public IEnumerable<IValueProvider> GetMembers(Type type)
@@ -36,6 +43,8 @@ internal sealed record MemberProvider : IMemberProvider
         {
             var properties = type.GetProperties(flags)
                 .Where(p => p.GetIndexParameters().Length == 0)
+                .Where(p => p.GetMethod is not null)
+                .Where(ShouldIncludeProperty)
                 .Select(p => new PropertyValueProvider(p));
 
             members = members.Concat(properties);
@@ -43,10 +52,14 @@ internal sealed record MemberProvider : IMemberProvider
 
         if (_includeFields)
         {
-            var fields = type.GetFields(flags)
-                .Select(f => new FieldValueProvider(f));
+            var fields = type.GetFields(flags).Select(f => new FieldValueProvider(f));
 
             members = members.Concat(fields);
+        }
+
+        if (_memberFilter is not null)
+        {
+            members = members.Where(member => _memberFilter(member));
         }
 
         return members;
@@ -59,9 +72,27 @@ internal sealed record MemberProvider : IMemberProvider
             return false;
         }
 
-        return _includeProperties == other._includeProperties && _includeFields == other._includeFields && _includePublicMembers == other._includePublicMembers && _includeNonPublicMembers == other._includeNonPublicMembers;
+        return _includeProperties == other._includeProperties
+               && _includeFields == other._includeFields
+               && _includePublicMembers == other._includePublicMembers
+               && _includeNonPublicMembers == other._includeNonPublicMembers
+               && _includeVirtualMembers == other._includeVirtualMembers
+               && Equals(_memberFilter, other._memberFilter);
     }
 
-    public override int GetHashCode()
-        => (_includeProperties, _includeFields, _includePublicMembers, _includeNonPublicMembers).GetHashCode();
+    public override int GetHashCode() =>
+        (
+            _includeProperties,
+            _includeFields,
+            _includePublicMembers,
+            _includeNonPublicMembers,
+            _includeVirtualMembers,
+            _memberFilter
+        ).GetHashCode();
+
+    private bool IsVirtualProperty(PropertyInfo property)
+        => property.GetMethod?.IsVirtual is true;
+
+    private bool ShouldIncludeProperty(PropertyInfo propertyInfo)
+        => _includeVirtualMembers || !IsVirtualProperty(propertyInfo);
 }

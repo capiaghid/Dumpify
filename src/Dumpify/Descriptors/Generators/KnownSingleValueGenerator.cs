@@ -17,6 +17,9 @@ internal class KnownSingleValueGenerator : IDescriptorGenerator
         typeof(double).TypeHandle,
         typeof(decimal).TypeHandle,
         typeof(string).TypeHandle,
+        typeof(char).TypeHandle,
+        typeof(nuint).TypeHandle,
+        typeof(nint).TypeHandle,
 #if NET5_0_OR_GREATER
         typeof(Half).TypeHandle,
 #endif
